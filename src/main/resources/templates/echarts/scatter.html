@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<body>
+<div id="main" style="width: 1200px;height:550px;"></div>
+
+</body>
+</html>
+<script>
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+    myChart.setOption({
+        title:{
+            text:"用户聚类"
+        },
+        grid: {
+            x: 100,
+            y: 100
+        },
+        tooltip : {
+            trigger: 'axis',
+            showDelay : 0,
+//            formatter : "{a} <br/>{b} : {c} ({d}%)",
+            formatter : function (params) {
+                console.log(params)
+                if (params.length >= 1) {
+                    return  "三项数据汇总" +
+                        "<br />通话：" + params[0].value[0] + ' 分钟' +
+                        "<br />流量：" + params[0].value[1] + ' M' +
+                        "<br />短信：" + params[0].value[2] + ' 条';
+                }else {
+                    return params.name + ' : ' + params.value;
+                }
+            },
+            axisPointer:{
+                show: true,
+                type : 'cross',
+                lineStyle: {
+                    type : 'dashed',
+                    width : 1
+                }
+            }
+
+        },
+        legend: {
+            data:['scatter1']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataZoom : {show: true},
+                dataView : {show: true, readOnly: false},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        xAxis : [
+            {
+                name : 'calltime',
+                type : 'value',
+                splitNumber: 10,
+                max: 1200,
+                splitLine: {
+                    show: true
+                },
+            }
+        ],
+        yAxis : [
+            {
+                name : 'flow',
+                type : 'value',
+                splitNumber: 10,
+                max: 12000,
+                nameLocation: 'end',
+                nameGap: 20,
+                splitLine: {
+                    show: true
+                },
+            }
+        ],
+        visualMap: [
+            {
+                left: 'right',
+                top: '10%',
+                dimension: 2,
+                min: 0,
+                max: 300,
+                itemWidth: 30,
+                itemHeight: 150,
+                calculable: true,
+                precision: 0.1,
+                text: ['短信/条'],
+                textGap: 30,
+                textStyle: {
+                    color: '#0500ff'
+                },
+                inRange: {
+                    symbolSize: [5, 20]
+                },
+                /*outOfRange: {
+                    symbolSize: [10, 70],
+                    color: ['rgba(255,255,255,.2)']
+                },*/
+                controller: {
+                    inRange: {
+                        color: ['#c23531']
+                    },
+                    outOfRange: {
+                        color: ['#444']
+                    }
+                }
+            }
+        ],
+        series : [
+            {
+                type:'scatter',
+//                symbolSize: 4,
+                color: "#18c207",
+            }
+        ]
+    });
+
+    var datas = [];
+    var info = {"opt": "bar"};
+    $.post('./getScatterData', info, function (data) {
+//        console.log(data)
+        datas.length = 0;
+        for (var i = 0; i < data.length; i++) {
+            datas.push([data[i].x, data[i].y, data[i].z])
+        }
+//        console.log(datas);
+
+        // 填入数据
+        myChart.setOption({
+            /*legend: {
+                //类别
+                data: mapOnlyKey
+            },*/
+            series: [{
+                // 根据名字对应到相应的系列
+                type: 'scatter',
+                data: datas
+            }]
+        });
+
+    }, 'json');
+</script>

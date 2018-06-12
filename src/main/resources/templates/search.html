@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>历史用户信息</title>
+</head>
+<style type="text/css">
+    .tel
+    {
+        width: 300px;
+        height: 40px;
+    }
+    .submit
+    {
+        font-size: larger;
+    }
+
+</style>
+<body>
+<h1><center>历史用户查询</center></h1>
+<div class="middle" style="width: 1000px;height: 600px;margin: auto">
+    <center>
+        <form th:action="@{/togetyhxx}" th:object="${YhxxEntity}" th:method="post" target="_blank">
+            <span style="font-size: x-large">请输入：</span><input type="text" name="tel" class="tel" placeholder="手机号"/>
+            <input class="submit" type="submit" value="提交"/>
+        </form>
+    </center>
+</div>
+</body>
+</html>

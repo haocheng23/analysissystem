@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>充值金额</title>
+</head>
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<body>
+<div id="main" style="width: 1000px;height:500px;"></div>
+
+</body>
+</html>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    // 指定图表的配置项和数据
+    myChart.setOption({
+        title: {
+            text: '充值金额',
+            x: 'center'
+        },
+//        backgroundColor: '#FFE793',
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            data: []
+        },
+        /*legend: {
+            data: [],
+            align: 'left',
+            left: 10
+        },*/
+        toolbox: {
+            show: true,
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        xAxis: {
+            name: '充值费用',
+            type: 'category',
+            silent: false,
+            axisLine: {onZero: true},
+            splitLine: {show: false},
+            splitArea: {show: false},
+            data: []
+        },
+        yAxis: {
+            name: '订单数量',
+            type: 'value',
+            max : 10000,
+            splitArea: {show: true},
+        },
+        grid: {
+            left: 100
+        },
+        series: [
+            {
+                name: '哈哈哈哈',
+                type: 'bar',
+                stack: 'one',
+                data: [],
+                markPoint: {
+                    data: [
+                        {type: 'max', name: '最大值'},
+                        {type: 'min', name: '最小值'}
+                    ]
+                },
+                markLine: {
+                    data: [
+                        {type: 'average', name: '平均值'}
+                    ]
+                }
+            }
+        ]
+    });
+
+    // 异步加载数据
+    var mapOnlyKey = [];
+    var mapKeyValue = [];
+    var mapOnlyValue = [];
+    var info = {"opt": "bar"};
+    $.post("./GetBarData", info, function (data) {
+        mapOnlyKey.length = 0;
+        mapKeyValue.length = 0;
+        mapOnlyValue.length = 0;
+        for (var i = 0; i < data.length; i++) {
+            mapOnlyKey.push(data[i].rechargefee);
+            mapKeyValue.push({"name": data[i].rechargefee, "value": Math.round(data[i].total)});
+            mapOnlyValue.push(data[i].total);
+        }
+        console.log(mapOnlyKey);
+        console.log(mapKeyValue);
+        console.log(mapOnlyValue);
+
+        // 填入数据
+        myChart.setOption({
+            legend: {
+                //类别
+                data: mapOnlyKey
+            },
+            xAxis: [
+                {
+                    data: mapOnlyKey
+                }
+            ],
+            series: [{
+                // 根据名字对应到相应的系列
+                name: '数量',
+                data: mapKeyValue
+            }]
+        });
+        // 使用刚指定的配置项和数据显示图表。
+    }, 'json');
+
+</script>

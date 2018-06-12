@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<head>
+    <meta charset="UTF-8">
+    <title>历史用户信息</title>
+</head>
+<style type="text/css">
+    table
+    {
+        border-collapse:collapse;
+    }
+
+    table, td, th
+    {
+        border:1px solid black;
+        text-align: center;
+    }
+</style>
+<script>
+    /*function check(byTel) {
+        if (byTel == null){
+            alert("用户不存在！")
+        }
+    }*/
+</script>
+<body>
+<h1><center>历史用户查询结果</center></h1>
+<div class="middle" style="width: 1000px;height: 600px;margin: auto">
+    <center>
+    <table>
+        <!--<tbody>-->
+        <tr style="height: 50px;">
+            <th>姓名</th>
+            <th>性别</th>
+            <th>年龄</th>
+            <th>手机号码</th>
+            <th>身份证号</th>
+            <th>入网时间</th>
+            <th>积分</th>
+            <th>地址</th>
+            <th>邮箱</th>
+        </tr>
+        <tr>
+            <td style="height: 50px;" th:text="${byTel.name}"></td>
+            <td style="height: 50px;" th:text="${byTel.age}"></td>
+            <td style="height: 50px;" th:text="${byTel.sex}"></td>
+            <td style="height: 50px;" th:text="${byTel.tel}"></td>
+            <td style="height: 50px;" th:text="${byTel.idcard}"></td>
+            <td style="height: 50px;" th:text="${byTel.innet}"></td>
+            <td style="height: 50px;" th:text="${byTel.point}"></td>
+            <td style="height: 50px;" th:text="${byTel.road}"></td>
+            <td style="height: 50px;" th:text="${byTel.email}"></td>
+        </tr>
+
+
+        <!--</tbody>-->
+    </table>
+</center>
+</div>
+</body>
+</html>

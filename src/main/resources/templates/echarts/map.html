@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单充值省份分布</title>
+</head>
+
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<script type="text/javascript" src="js/china.js"></script>
+
+<body>
+<h1>订单充值省份分布</h1>
+<div id="main" style="width: 1200px; height: 500px;"></div>
+</body>
+</html>
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+    option = {
+        title : {
+            text : '订单充值分布情况',
+            subtext : '空间分布图',
+            left : 'center',
+        },
+        tooltip : {
+            trigger : 'item'
+        },
+        legend : {
+            orient : 'vertical',
+            left : 'left',
+            data : [ '2018年5月1日' ]
+        },
+        visualMap : {
+            min : 0,
+            max : 6000,
+            left : 'left',
+            top : 'bottom',
+            text : [ '高', '低' ], // 文本，默认为数值文本
+            calculable : true
+        },
+        toolbox : {
+            show : true,
+            orient : 'vertical',
+            left : 'right',
+            top : 'center',
+            feature : {
+                dataView : {
+                    readOnly : false
+                },
+                restore : {},
+                saveAsImage : {}
+            }
+        },
+        series : [ {
+            name : '2018年',
+            type : 'map',
+            mapType : 'china',
+            roam : false,
+            label : {
+                normal : {
+                    show : true
+                },
+                emphasis : {
+                    show : true
+                }
+            },
+            data : []
+        }, ]
+    };
+    myChart.setOption(option);
+    var info = {
+        "opt" : "map"
+    };
+
+    var mapOnlyKey = [];
+    var mapKeyValue = [];
+    var mapOnlyValue = [];
+    $.post("./GetMapData", function(data) {
+//        alert(data)
+        console.log(data[0])
+        for (var i = 0; i < data.length; i++) {
+            mapOnlyKey.push(data[i].province);
+            mapKeyValue.push({"name": data[i][province], "value": Math.round(data[i][total])});
+            mapOnlyValue.push(data[i].total);
+        }
+        console.log(mapKeyValue)
+
+        myChart.setOption({
+            series : [ {
+                data :mapKeyValue
+            } ]
+        })
+    },'json');
+</script>

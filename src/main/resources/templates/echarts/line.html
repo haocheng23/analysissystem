@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>充值时段分布</title>
+</head>
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width: 1200px; height: 600px;"></div>
+</body>
+</html>
+<script type="text/javascript">
+    var data = [];
+    var markLineData = [];
+    for (var i = 1; i < data.length; i++) {
+        markLineData.push([{
+            xAxis: i - 1,
+            yAxis: data[i - 1],
+            value: (data[i] + data[i - 1]).toFixed(2)
+        }, {
+            xAxis: i,
+            yAxis: data[i]
+        }]);
+    }
+    // 定义图表option
+    option = {
+        //图表标题
+        title: {
+            //正标题
+            text: '充值时间分布',
+            //副标题
+            subtext: '单位：小时'
+        },
+        //数据提示框配置
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend:{
+            data: ['三月份','四月份','五月份']
+        },
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                data : [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        grid: {
+            left: 100
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        series: [
+            {
+                name: '三月份',
+                type: 'line',
+                stack: '总量',
+                data: []
+            },
+            {
+                name:'四月份',
+                type:'line',
+                stack: '总量',
+                data: []
+            },
+            {
+                name:'五月份',
+                type:'line',
+                stack: '总量',
+                data: []
+            }
+
+        ],
+        markPoint: {
+            data: [{
+                type: 'max',
+                name: '最大值'
+            }, {
+                type: 'min',
+                name: '最小值'
+            }]
+        },
+        //效果样式
+        markLine: {
+            smooth: true,
+            effect: {
+                show: true
+            },
+            distance: 10,
+            label: {
+                normal: {
+                    position: 'middle'
+                }
+            },
+            symbol: ['none', 'none'],
+            data: [
+                {type: 'average', name: '平均值'}
+            ]
+        }
+
+    };
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    // 为echarts对象加载数据
+    myChart.setOption(option);
+    // 异步加载数据
+    var info = {
+        "opt": "line"
+    };
+    $.post("./GetLineData", info, function (obj) {
+        var data1 = []
+        var data2 = []
+        var data3 = []
+        for (var i = 0; i < obj.length; i++) {
+            data1.push(obj[i]["march"])
+            data2.push(obj[i]["april"])
+            data3.push(obj[i]["may"])
+        }
+        console.log(data1)
+        console.log(data2)
+        console.log(data3)
+        myChart.setOption({
+            series:[
+                {
+                    data:data1
+                },
+                {
+                    data:data2
+                },
+                {
+                    data:data3
+                }
+            ]
+        })
+    },'json');
+</script>

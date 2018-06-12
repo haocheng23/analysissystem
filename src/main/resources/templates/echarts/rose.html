@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kmeans</title>
+</head>
+
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="height:500px;border:1px solid #ccc;padding:10px;">
+</div>
+</body>
+<script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+    myChart.setOption({
+        title : {
+            text: '聚类结果展示',
+            subtext: 'kmeans',
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            data: ['类别一', '类别二', '类别三']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {
+                    show: true,
+                    type: ['pie', 'funnel']
+                },
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        series : [
+            {
+                name:'簇详情',
+                type:'pie',
+                radius : [50, 110],
+                center : ['50%', '50%'],
+                roseType : 'area',
+                data:[]
+            }
+        ]
+    });
+
+    var datares = [];
+    var info = {"opt": "pie"};
+    $.post('./getKmeansRes', info, function (data) {
+        console.log(data)
+        datares.length = 0;
+        for (var i = 0; i < data.length; i++) {
+            datares.push({"name": data[i].type, "value": data[i].count})
+        }
+        console.log(datares)
+        // 填入数据
+        myChart.setOption({
+            series: [{
+                // 根据名字对应到相应的系列
+                type:'pie',
+                data: datares
+            }]
+        });
+
+    }, 'json');
+
+</script>
+</html>

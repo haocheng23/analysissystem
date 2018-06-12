@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>充值金额</title>
+</head>
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<body>
+<div id="main" style="height:580px;border:1px solid #ccc;padding:10px;"></div>
+
+</body>
+</html>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+    myChart.setOption({
+        title: {
+            text: '会员等级-雷达图'
+        },
+        tooltip: {
+            trigger : 'item'
+        },
+        legend: {
+            orient : 'horizontal',
+            x : 'center',
+            y : 'top',
+            data: ['男性', '女性']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        radar: {
+            // shape: 'circle',
+            name: {
+                textStyle: {
+                    color: '#fff',
+                    backgroundColor: '#999',
+                    borderRadius: 3,
+                    padding: [3, 5]
+                }
+            },
+            indicator: [
+                {name: 'VIP0', max: 1500},
+                {name: 'VIP1', max: 1500},
+                {name: 'VIP2', max: 1500},
+                {name: 'VIP3', max: 1500},
+                {name: 'VIP4', max: 1500},
+                {name: 'VIP5', max: 1500}
+            ]
+        },
+        series: [{
+            name: '',
+            type: 'radar',
+//            areaStyle: {normal: {}},
+            data : [
+                {
+                    value : [],
+                    name : '男性'
+                },
+                {
+                    value : [],
+                    name : '女性'
+                }
+            ]
+        }]
+    });
+
+    var info = {
+        "opt" : "radar"
+    };
+    // 异步加载数据
+    var mapOnlyKey = [];
+    var mapOnlyValueMale = [];
+    var mapOnlyValueFamale = [];
+    $.post("/getVip", info, function (data) {
+//        console.log(data)
+        mapOnlyKey.length = 0;
+        mapOnlyValueMale.length = 0;
+        mapOnlyValueFamale.length = 0;
+        for (var i = 0; i < data.length; i++) {
+            mapOnlyKey.push(data[i].level);
+            mapOnlyValueMale.push(data[i].male);
+            mapOnlyValueFamale.push(data[i].famale);
+        }
+        console.log(mapOnlyKey);
+        console.log(mapOnlyValueMale);
+        console.log(mapOnlyValueFamale);
+
+        // 填入数据
+        myChart.setOption({
+            series: [{
+                // 根据名字对应到相应的系列
+                name: '数量',
+                data : [
+                    {
+                        value : mapOnlyValueFamale,
+                        name : '女性',
+                    }, {
+                        value : mapOnlyValueMale,
+                        name : '男性',
+                    }
+                ]
+            }]
+        });
+        // 使用刚指定的配置项和数据显示图表。
+    }, 'json');
+
+</script>

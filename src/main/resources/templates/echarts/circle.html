@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>支付方式</title>
+</head>
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/echarts.min.js"></script>
+<body>
+<div id="main" style="height:600px;border:1px solid #ccc;padding:10px;"></div>
+</body>
+
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    // 指定图表的配置项和数据
+    myChart.setOption({
+        title: {
+            text: '用户支付方式'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient : 'horizontal',
+//            x : 'left',
+            data: []
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                        funnel: {
+                            x: '25%',
+                            width: '50%',
+                            funnelAlign: 'center',
+                            max: 1548
+                        }
+                    }
+                },
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        series : [
+            {
+                name:'支付方式',
+                type:'pie',
+                radius : ['45%', '70%'],
+                itemStyle : {
+                    normal : {
+                        label : {
+                            show : false,
+                            position: 'center'
+                        },
+                        labelLine : {
+                            show : false
+                        }
+                    },
+                    emphasis : {
+                        label : {
+                            show : true,
+                            position : 'center',
+                            textStyle : {
+                                fontSize : '30',
+                                fontWeight : 'bold'
+                            }
+                        }
+                    }
+                },
+                data:[]
+            }
+        ]
+    });
+
+    // 异步加载数据
+    var mapOnlyKey = [];
+    var mapKeyValue = [];
+    var mapOnlyValue = [];
+    var info = {"opt": "pie"};
+    $.post("./GetCircleData", info, function(data){
+        mapOnlyKey.length=0;
+        mapKeyValue.length=0;
+        mapOnlyValue.length=0;
+        for(var i=0; i < data.length; i++){
+            mapOnlyKey.push( data[i].payway);
+            mapKeyValue.push({"name": data[i].payway, "value":Math.round(data[i].total)});
+            mapOnlyValue.push( data[i].total );
+        }
+        console.log(mapOnlyKey);
+        console.log(mapKeyValue);
+        console.log(mapOnlyValue);
+
+        // 填入数据
+        myChart.setOption({
+            legend: {
+                //类别
+                data: mapOnlyKey
+            },
+            series: [{
+                // 根据名字对应到相应的系列
+                name: '支付方式',
+                data: mapKeyValue
+            }]
+        });
+        // 使用刚指定的配置项和数据显示图表。
+    }, 'json');
+
+</script>
+</html>
